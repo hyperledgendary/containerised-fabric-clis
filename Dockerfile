@@ -13,6 +13,8 @@ RUN curl --fail --silent --show-error -L "https://github.com/hyperledger/fabric/
 
 FROM alpine:${ALPINE_VERSION}
 
+RUN apk --no-cache add libc6-compat
+
 ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
 
 WORKDIR /etc/hyperledger/fabric
@@ -20,6 +22,10 @@ WORKDIR /etc/hyperledger/fabric
 COPY --chown=0:0 --from=binaries /fabric-binaries/bin /usr/local/bin
 COPY --chown=0:0 --from=binaries /fabric-binaries/config /etc/hyperledger/fabric
 
-#WORKDIR /tbc
+RUN addgroup -g 500 fabric && adduser -u 500 -D -h /home/fabric -G fabric fabric
+
+USER fabric
+
+WORKDIR /home/fabric
 
 #CMD tbc
